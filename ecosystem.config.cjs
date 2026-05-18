@@ -1,0 +1,30 @@
+// PM2 manifest for web-tools.
+//
+// Runs as the `webtools` system user (one canonical PM2 daemon for both humans).
+// Apps are launched directly from their node_modules/.bin/ — no bun/bunx at
+// runtime, so the webtools user doesn't need a Bun install. PM2 + Node alone
+// are enough. Bun is used by humans at build time only.
+//
+// Adding a new external tool: append a new app object below. The script path
+// must be the absolute path to the external's own `node_modules/.bin/<bin>`
+// (externals are not workspaces — they install deps independently).
+
+const root = __dirname;
+
+module.exports = {
+  apps: [
+    {
+      name: "web-tools-host",
+      cwd: `${root}/apps/host`,
+      script: `${root}/node_modules/.bin/next`,
+      args: "start -H 0.0.0.0 -p 3300",
+      env: { NODE_ENV: "production" },
+    },
+    {
+      name: "web-tools-r3f-examples",
+      cwd: `${root}/apps/external/r3f-examples`,
+      script: `${root}/apps/external/r3f-examples/node_modules/.bin/vite`,
+      args: "preview --port 3301 --host 0.0.0.0 --strictPort",
+    },
+  ],
+};

@@ -37,3 +37,7 @@ next-env.d.ts
 # misc
 .cache/
 coverage/
+
+# private host-specific runbook (IPs, internal hostnames, lab-only diffs)
+# Copied between collaborator machines out-of-band — never committed.
+/private/
