@@ -12,7 +12,7 @@ out to the external's dev URL (or prod URL).
 Each external owns its origin:
 
 - dev: `https://<subdomain>.web-tools.localhost/`
-- prod: `https://<subdomain>.example.com/` (TBD, see `urls.config.ts`)
+- prod: `https://<subdomain>.web-tools.donjor.net/` (configured in `urls.config.ts`)
 
 Externals are **singletons across worktrees**. They keep running on the
 main URL; worktree-host dashboards link to the same instance.

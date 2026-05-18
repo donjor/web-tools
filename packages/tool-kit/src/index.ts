@@ -35,7 +35,7 @@ export type UrlContext = {
   env: "dev" | "prod";
   /** Dev host suffix, e.g. "web-tools.localhost". External URL: `<subdomain>.<devBase>`. */
   devBase: string;
-  /** Prod host suffix, e.g. "example.com". External URL: `<subdomain>.<prodHost>`. */
+  /** Prod host suffix, e.g. "web-tools.donjor.net". External URL: `<subdomain>.<prodHost>`. */
   prodHost: string;
 };
 

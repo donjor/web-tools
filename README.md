@@ -3,6 +3,9 @@
 A suite of browser-based tools. The root is a card-grid dashboard;
 each card opens one tool.
 
+**Live at:** [`web-tools.donjor.net`](https://web-tools.donjor.net) ·
+externals at `<subdomain>.web-tools.donjor.net`.
+
 Two flavors of tools coexist:
 
 - **Built-in** — Next.js routes inside `apps/host`. Share theme + dev server.

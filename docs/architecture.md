@@ -47,9 +47,9 @@ The environment determines the base.
 
 | Surface | Main checkout | Worktree `<wt>` | Production |
 |---|---|---|---|
-| Dashboard | `https://web-tools.localhost/` | `https://<wt>.web-tools.localhost/` | `https://example.com/` |
-| Built-in | `https://web-tools.localhost/<slug>` | `https://<wt>.web-tools.localhost/<slug>` | `https://example.com/<slug>` |
-| External | `https://<subdomain>.web-tools.localhost/` | same as main (singleton — see below) | `https://<subdomain>.example.com/` |
+| Dashboard | `https://web-tools.localhost/` | `https://<wt>.web-tools.localhost/` | `https://web-tools.donjor.net/` |
+| Built-in | `https://web-tools.localhost/<slug>` | `https://<wt>.web-tools.localhost/<slug>` | `https://web-tools.donjor.net/<slug>` |
+| External | `https://<subdomain>.web-tools.localhost/` | same as main (singleton — see below) | `https://<subdomain>.web-tools.donjor.net/` |
 
 Worktree behavior: portless auto-prefixes the host's name with the worktree
 slug. The host's dev script uses `portless run --name web-tools next dev`
@@ -59,7 +59,7 @@ them. If you genuinely need a per-worktree external instance, start it
 manually with `portless --name <wt>.<subdomain>.web-tools --app-port <N>
 bun run dev` from the submodule.
 
-The base swap (`web-tools.localhost` ↔ `example.com`) is centralized in
+The base swap (`web-tools.localhost` ↔ `web-tools.donjor.net`) is centralized in
 [`urls.config.ts`](../urls.config.ts) and applied by `toolUrl()` in
 `packages/tool-kit/src/index.ts`.
 
@@ -75,7 +75,7 @@ type ToolManifest =
 ```
 
 `subdomain` is the **identity** part of the external's URL — `r3f-examples`
-becomes `r3f-examples.web-tools.localhost` in dev and `r3f-examples.example.com`
+becomes `r3f-examples.web-tools.localhost` in dev and `r3f-examples.web-tools.donjor.net`
 in prod. Don't store the full host; the base belongs to `urls.config.ts`.
 
 `repo` is documentary — humans reading the registry can find the submodule
