@@ -1,0 +1,3 @@
+[submodule "apps/external/r3f-examples"]
+	path = apps/external/r3f-examples
+	url = https://github.com/donjor/r3f-examples.git

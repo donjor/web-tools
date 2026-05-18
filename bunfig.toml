@@ -1,0 +1,4 @@
+[install]
+# Hoist workspace deps to the root node_modules so Turbopack's module
+# resolver can find them from any path in the tree.
+linker = "hoisted"

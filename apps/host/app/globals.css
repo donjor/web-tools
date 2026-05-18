@@ -1,0 +1,3 @@
+@import "@web-tools/tailwind-preset/globals.css";
+@source "../../../packages/ui/components/**/*.{ts,tsx}";
+@source "../**/*.{ts,tsx}";

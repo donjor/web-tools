@@ -1,0 +1,11 @@
+# Worktrunk config — runs on worktree lifecycle events.
+# Available template vars: {{ primary_worktree_path }}, {{ worktree_path }}, {{ branch }}
+
+[post-create]
+install = "cd {{ worktree_path }} && bun install"
+
+[pre-commit]
+typecheck = "bun run typecheck"
+
+[pre-merge]
+build = "bun run build"

@@ -1,0 +1,28 @@
+{
+  "name": "web-tools",
+  "private": true,
+  "version": "0.0.1",
+  "description": "A monorepo dashboard for browser-based tools — built-in (Next.js routes) and external (git submodules).",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/donjor/web-tools.git"
+  },
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "bash scripts/dev.sh",
+    "dev:host": "bun run --filter @web-tools/host dev",
+    "build": "bun run --filter @web-tools/host build",
+    "start": "bun run --filter @web-tools/host start",
+    "typecheck": "bun run --filter '*' typecheck",
+    "check": "bun run typecheck",
+    "clean": "rm -rf node_modules apps/*/node_modules apps/*/.next apps/external/*/node_modules packages/*/node_modules"
+  },
+  "engines": {
+    "bun": ">=1.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "@types/node": "^22.10.0"
+  },
+  "packageManager": "bun@1.2.4"
+}
