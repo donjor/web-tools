@@ -15,13 +15,14 @@ packages/
   tailwind-preset/       # Tailwind v4 theme tokens
 tools.config.ts          # tool registry (source of truth)
 urls.config.ts           # dev/prod URL bases
-scripts/dev.sh       # main-checkout dev orchestration
+scripts/                 # externals.sh (list) + dev.sh (orchestrator) + postinstall.sh
 .wt.toml                 # worktrunk hooks
 bunfig.toml              # linker = "hoisted" (required, see below)
 ```
 
-There is no `portless.json` — it was vestigial. `scripts/dev.sh` is the
-single source of truth for which apps to start in dev.
+There is no `portless.json` — it was vestigial. `scripts/externals.sh` is
+the single source of truth for which external apps exist; `scripts/dev.sh`
+(orchestrator) and `scripts/postinstall.sh` (deps installer) both read it.
 
 ## Tool flavors
 

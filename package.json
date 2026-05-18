@@ -15,6 +15,7 @@
     "start": "bun run --filter @web-tools/host start",
     "typecheck": "bun run --filter '*' typecheck",
     "check": "bun run typecheck",
+    "postinstall": "bash scripts/postinstall.sh",
     "clean": "rm -rf node_modules apps/*/node_modules apps/*/.next apps/external/*/node_modules packages/*/node_modules"
   },
   "engines": {

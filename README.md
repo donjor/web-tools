@@ -21,8 +21,7 @@ portless · worktrunk.
 
 ```bash
 git submodule update --init --recursive
-bun install
-( cd apps/external/r3f-examples && bun install )   # externals aren't workspaces
+bun install        # root + every external (postinstall installs submodules)
 bun run dev        # host + every external (worktrees auto-skip externals)
 bun run dev:host   # host only — explicit, useful when an external is misbehaving
 ```
@@ -42,7 +41,7 @@ packages/
   tailwind-preset/       # Tailwind v4 theme
 tools.config.ts          # tool registry
 urls.config.ts           # dev/prod URL bases
-scripts/dev.sh           # dev orchestration (host + externals, wt-aware)
+scripts/                 # externals.sh (list) + dev.sh (orchestrator) + postinstall.sh
 .wt.toml                 # worktrunk hooks
 ```
 

@@ -41,19 +41,19 @@ git submodule add <repo-url> apps/external/<slug>
 ```
 
 ```bash
-# 4. scripts/dev.sh — add a start line:
+# 4. Register the external in scripts/externals.sh by appending one line:
 #
-#   start apps/external/<slug>  <subdomain>.web-tools  <port>
+#   "apps/external/<slug> <subdomain>.web-tools <port>"
 #
 # Args: <directory> <portless-name> <app-port>.
 # <port> must match what the submodule actually binds to.
+# scripts/dev.sh (orchestrator) and scripts/postinstall.sh (deps installer)
+# both read this file automatically.
 ```
 
 ```bash
-# 5. Install the submodule's own deps (it's not a bun workspace)
-( cd apps/external/<slug> && bun install )
-
-# 6. From the repo root:
+# 5. From the repo root:
+bun install           # root postinstall installs the submodule's deps too
 bun run dev           # host + every external (worktrees auto-skip externals)
 ```
 

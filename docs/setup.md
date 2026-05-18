@@ -28,14 +28,16 @@ TLS cert.
 
 ```bash
 git submodule update --init --recursive   # if cloning fresh
-bun install                                # workspaces (apps/host, packages/*)
-( cd apps/external/r3f-examples && bun install )   # each external is independent
+bun install                                # root workspaces + every external
 bun run dev                                # host + every external
 ```
 
-External submodules are **not** bun workspaces — they have their own
-`package.json` and lockfile. Install them once after `git submodule update`,
-or whenever the submodule's `package.json` changes.
+External submodules are **not** bun workspaces — they keep their own
+`package.json` and lockfile. The root `postinstall` hook
+(`scripts/postinstall.sh`) installs them automatically after every root
+`bun install`, reading the list from [`scripts/externals.sh`](../scripts/externals.sh).
+Submodule dirs that aren't present (cloned without `--recurse-submodules`)
+are skipped silently.
 
 `bun run dev` runs `scripts/dev.sh`, which starts the host plus each
 registered external with the right portless flags. It auto-detects

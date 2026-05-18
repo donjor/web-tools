@@ -84,19 +84,19 @@ binds to a known port.
 ```
 
 ```bash
-# 2. Add a start line to scripts/dev.sh:
+# 2. Register it in scripts/externals.sh by appending one line:
 #
-#   start apps/external/<slug>  <subdomain>.web-tools  <port>
+#   "apps/external/<slug> <subdomain>.web-tools <port>"
 #
-# The arguments are: <directory> <portless-name> <app-port>.
+# Fields: <directory> <portless-name> <app-port>.
 # <port> must match what the submodule's `dev` script actually listens on.
+# Both scripts/dev.sh (orchestrator) and scripts/postinstall.sh (deps installer)
+# read this list automatically.
 ```
 
 ```bash
-# 3. Install the submodule's deps (it's NOT a bun workspace — has its own lockfile)
-( cd apps/external/<slug> && bun install )
-
-# 4. Start everything
+# 3. Install everything (root + new external) and start.
+bun install            # root postinstall installs the submodule's deps too
 bun run dev            # host + every external (worktrees auto-skip externals)
 ```
 

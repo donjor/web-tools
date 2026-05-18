@@ -5,12 +5,14 @@
 # created by `wt switch --create`. In that case we skip externals — they're
 # singletons that stay running in the main checkout to avoid URL collisions.
 #
-# To add an external: append a `start <dir> <portless-name> <app-port>` line
-# in the "Externals" block below.
+# To add an external: append a line to scripts/externals.sh.
 
 set -e
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+# shellcheck source=externals.sh
+source "$ROOT/scripts/externals.sh"
+
 PIDS=()
 
 cleanup() {
@@ -45,7 +47,10 @@ PIDS+=($!)
 if [ -f "$ROOT/.git" ]; then
   echo "[dev] worktree detected — host only (externals stay singleton in main checkout)"
 else
-  start apps/external/r3f-examples  r3f-examples.web-tools  4444
+  for entry in "${EXTERNALS[@]}"; do
+    read -r dir name port <<<"$entry"
+    start "$dir" "$name" "$port"
+  done
 fi
 
 wait
