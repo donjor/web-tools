@@ -9,11 +9,17 @@
 # Invoked via /usr/local/bin/web-tools (the thin wrapper installed on test).
 # Run from anywhere — script always cd's into /srv/web-tools.
 #
-# Reads scripts/externals.sh for the external list. `bun install` triggers
-# scripts/postinstall.sh which installs deps for every external listed there.
+# Externals are auto-discovered from scripts/externals/<slug>.toml. The
+# directory is conventional (apps/external/<slug>). `bun install` triggers
+# scripts/postinstall.sh which installs deps for every external.
 
 set -euo pipefail
 umask 002    # belt-and-braces: keep files group-writable even from non-interactive shells
+
+# Non-interactive ssh skips ~/.bashrc, so bun isn't on PATH by default. Put it
+# back so `web-tools deploy` works whether you ran it from a login shell or
+# via `ssh test 'web-tools deploy'`.
+export PATH="$HOME/.bun/bin:$PATH"
 
 REPO=/srv/web-tools
 cd "$REPO"
@@ -25,16 +31,15 @@ git submodule update --init --recursive
 echo "▶ bun install (also runs scripts/postinstall.sh → installs every external)"
 bun install
 
-# shellcheck source=externals.sh
-source "$REPO/scripts/externals.sh"
-
 echo "▶ build each external (postinstall handled install)"
 # Memory-constrained LXC: NODE_OPTIONS caps Node heap so swap absorbs spikes
 # instead of the kernel killing the build. Externals with vite skip the
 # upstream `tsc --noEmit && vite build` and run vite directly — type-checking
 # is a CI concern, not a deploy concern.
-for entry in "${EXTERNALS[@]}"; do
-  read -r dir _name _port <<<"$entry"
+shopt -s nullglob
+for toml in "$REPO/scripts/externals/"*.toml; do
+  slug=$(basename "$toml" .toml)
+  dir="apps/external/$slug"
   [ -f "$REPO/$dir/package.json" ] || { echo "  · $dir — not present, skipped"; continue; }
   echo "  · $dir"
   if [ -x "$REPO/$dir/node_modules/.bin/vite" ]; then
@@ -44,6 +49,7 @@ for entry in "${EXTERNALS[@]}"; do
         bun run build || echo "    (no build script — skipped)" )
   fi
 done
+shopt -u nullglob
 
 echo "▶ write preview-config overrides for externals served via Vite preview"
 # Vite 6.3+ has a Host-header allowlist (CVE-2025-30208) — preview rejects
