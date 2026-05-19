@@ -4,21 +4,31 @@ This directory holds external tools that are wired into the dashboard but
 maintained as their own repositories. They are pulled in as **git submodules**
 and can be any framework (Next.js, Vite, Astro, plain SPA, etc.).
 
-The dashboard does **not** import code from external tools. It only links
-out to the external's dev URL (or prod URL).
+The dashboard does **not** import code from external tools. It links via
+a host-managed landing at `/external/<slug>` that click-throughs to the
+external's real origin — so every shared dashboard link carries host
+metadata regardless of where it travels.
 
 ## URL model
 
-Each external owns its origin:
+Each external owns its origin (the place its dev server actually runs):
 
 - dev: `https://<subdomain>.web-tools.localhost/`
 - prod: `https://<subdomain>.donjor.net/` (flat — Cloudflare Free Universal
   SSL only covers 1-level wildcards; bases live in `urls.config.ts`)
 
+Plus a host-managed landing for sharing:
+
+- dev: `https://web-tools.localhost/external/<slug>`
+- prod: `https://tools.donjor.net/external/<slug>`
+
+The dashboard card links to the landing; the landing renders the tool's
+title/description + a click-through CTA to the direct origin.
+
 In a worktree, externals are namespaced the same way as the host:
 `https://<subdomain>.<branch>.web-tools.localhost/`. Each worktree gets its
-own instances so the dashboard links route locally; ports are offset by a
-branch-deterministic hash so checkouts don't collide.
+own instances so the landing's click-through routes locally; ports are
+offset by a branch-deterministic hash so checkouts don't collide.
 
 ## Add a new external tool
 

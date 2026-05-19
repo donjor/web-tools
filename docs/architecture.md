@@ -39,19 +39,30 @@ with `{PORT}` substituted at start time).
 - A git submodule at `apps/external/<slug>/`.
 - Can be any framework — Next, Vite, Astro, plain SPA.
 - Runs on its own dev server, configured in `scripts/externals/<slug>.toml`.
-- Owns its origin: `<subdomain>.<base>`. The dashboard links out; the host
-  does not proxy or path-mount externals.
+- Owns its origin: `<subdomain>.<base>`. The dashboard links via a
+  host-managed landing at `/external/<slug>` so shared URLs carry host
+  metadata; the landing click-throughs to the real origin. Host doesn't
+  proxy or path-mount the external's bytes.
 
 ## URL model
 
-Single rule: **externals are origins (subdomain), built-ins are paths.**
-The environment determines the base.
+Two rules:
+
+1. **Externals are origins** (subdomain) — they run on their own dev servers
+   and own their own bytes.
+2. **Built-ins are paths** under the host.
+
+Plus one routing layer: the dashboard always links to externals via a
+host-managed landing at `/external/<slug>`, so shared URLs carry host
+metadata. The landing redirects-by-click onward to the external's real
+origin.
 
 | Surface | Main checkout | Worktree `<wt>` | Production |
 |---|---|---|---|
-| Dashboard | `https://web-tools.localhost/` | `https://<wt>.web-tools.localhost/` | `https://web-tools.donjor.net/` |
-| Built-in | `https://web-tools.localhost/<slug>` | `https://<wt>.web-tools.localhost/<slug>` | `https://web-tools.donjor.net/<slug>` |
-| External | `https://<subdomain>.web-tools.localhost/` | `https://<subdomain>.<wt>.web-tools.localhost/` | `https://<subdomain>.donjor.net/` |
+| Dashboard | `https://web-tools.localhost/` | `https://<wt>.web-tools.localhost/` | `https://tools.donjor.net/` |
+| Built-in | `https://web-tools.localhost/<slug>` | `https://<wt>.web-tools.localhost/<slug>` | `https://tools.donjor.net/<slug>` |
+| External landing (shareable) | `https://web-tools.localhost/external/<slug>` | `https://<wt>.web-tools.localhost/external/<slug>` | `https://tools.donjor.net/external/<slug>` |
+| External direct origin | `https://<subdomain>.web-tools.localhost/` | `https://<subdomain>.<wt>.web-tools.localhost/` | `https://<subdomain>.donjor.net/` |
 
 Worktree behavior: portless auto-prefixes the host's name with the worktree
 slug (the host's dev script uses `portless run --name web-tools next dev`).
@@ -59,15 +70,21 @@ slug (the host's dev script uses `portless run --name web-tools next dev`).
 `<sub>.<wt>.web-tools.localhost` — and offsets its port by a
 branch-deterministic hash so the main checkout and any number of worktrees
 can run concurrently without colliding. The host receives
-`WEB_TOOLS_WT_BRANCH` and `toolUrl()` rewrites external URLs to match, so
-the worktree dashboard's cards link to its own external instances rather
+`WEB_TOOLS_WT_BRANCH` and `externalDirectUrl()` derives each external's
+real origin from it, so the host-managed `/external/<slug>` landing in a
+worktree clicks through to that worktree's own external instance rather
 than the main checkout's.
 
-Bases live in [`urls.config.ts`](../urls.config.ts) and are applied by `toolUrl()` in `packages/tool-kit/src/index.ts`:
+Bases live in [`urls.config.ts`](../urls.config.ts). `toolUrl()` returns
+host-relative paths (`/<slug>` or `/external/<slug>`); the external
+landing uses `externalDirectUrl()` to compose the actual origin URL from
+the env-aware base for the click-through. Both live in
+`packages/tool-kit/src/index.ts`.
 
 - `devBase` — dashboard + external base in dev (`web-tools.localhost`).
-- `prodHost` — dashboard host in prod (`web-tools.donjor.net`).
+- `prodHost` — dashboard host in prod (`tools.donjor.net`).
 - `prodExternalBase` — external base in prod (`donjor.net`). Flatter than the dashboard host so Cloudflare Free Universal SSL covers `<sub>.donjor.net` automatically (it only covers 1-level wildcards).
+- `prodHostRedirects` — old hosts the edge should 301 → `prodHost`. Currently `web-tools.donjor.net` and the apex `donjor.net`.
 
 ## Tool registry contract
 
@@ -101,7 +118,7 @@ bun run dev:host    # host only — explicit override
 
 - starts the host via the host workspace's `dev` (which is `portless run --name web-tools …` — picks up the worktree prefix automatically).
 - auto-discovers externals by globbing `scripts/externals/*.toml`. Each toml's `dev` command runs through portless with explicit `--name` and `--app-port` (portless can't infer the port from arbitrary launchers, so the toml's `port` is authoritative). The `{PORT}` placeholder in `dev` is substituted at launch, which is what makes the launcher framework-agnostic — vite, next, astro, anything that accepts a port flag.
-- detects worktrees via `[ -f .git ]` and, in that mode, namespaces each external's portless route as `<slug>.<branch>.web-tools.localhost`, offsets the port by a branch-deterministic hash, and exports `WEB_TOOLS_WT_BRANCH` so the host's `toolUrl()` rewrites dashboard cards to match.
+- detects worktrees via `[ -f .git ]` and, in that mode, namespaces each external's portless route as `<slug>.<branch>.web-tools.localhost`, offsets the port by a branch-deterministic hash, and exports `WEB_TOOLS_WT_BRANCH` so the host's `externalDirectUrl()` (used by the `/external/<slug>` landing) clicks through to the worktree's external instance.
 - auto-initialises missing submodules (`git submodule update --init` + `bun install`) so a fresh worktree boots straight from `bun run dev`.
 - traps `INT/TERM/EXIT` and kills children on Ctrl-C.
 

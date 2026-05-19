@@ -10,11 +10,10 @@ import {
 import { Badge } from "@web-tools/ui/components/badge";
 import { toolUrl, type ToolManifest } from "@web-tools/tool-kit";
 import { resolveIcon } from "@/lib/icons";
-import { getUrlContext } from "@/lib/url-context";
 
 export function ToolCard({ tool }: { tool: ToolManifest }) {
   const Icon = resolveIcon(tool.icon);
-  const href = toolUrl(tool, getUrlContext());
+  const href = toolUrl(tool);
   const isExternal = tool.kind === "external";
 
   const inner = (
@@ -51,13 +50,6 @@ export function ToolCard({ tool }: { tool: ToolManifest }) {
     </Card>
   );
 
-  if (isExternal) {
-    return (
-      <a href={href} target="_blank" rel="noreferrer" className="block">
-        {inner}
-      </a>
-    );
-  }
   return (
     <Link href={href} className="block">
       {inner}

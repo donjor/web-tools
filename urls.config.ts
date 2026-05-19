@@ -12,6 +12,9 @@
 // `web-tools.donjor.net`.
 export const urlConfig = {
   devBase: "web-tools.localhost",
-  prodHost: "web-tools.donjor.net",
+  prodHost: "tools.donjor.net",
   prodExternalBase: "donjor.net",
+  /** Old prod hosts that should 301 → prodHost. Source of truth for the
+   *  redirect set the edge (Cloudflare) maintains. */
+  prodHostRedirects: ["web-tools.donjor.net", "donjor.net"],
 };

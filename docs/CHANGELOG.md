@@ -9,6 +9,24 @@ for fixes-only, **MAJOR** only on breaking external-facing changes.
 
 ---
 
+## [0.4.0] — 2026-05-19
+
+### Added
+- **Site metadata + OG share previews** for the dashboard and every built-in route (`/`, `/calculator`, `/todo`). `lib/metadata.ts` centralises helpers; `lib/og.tsx` renders 1200x630 branded cards (dark gradient + circular GitHub avatar).
+- **Favicons** sourced from the user's GitHub avatar, masked to a clean circle with transparent corners — `app/icon.png` + `app/apple-icon.png`, auto-wired by Next App Router.
+- **Site footer** in the root layout (sticky-bottom flex layout) with links to `/metadata-preview`, the source repo, and donjor's GitHub.
+- **Host-managed external landings** at `/external/<slug>`. Externals still run on their own subdomains, but the dashboard links via these landings so shared URLs always carry host metadata (title, description, branded OG image). Click-through opens the real subdomain. New helpers: `createExternalMetadata`, `externalDirectUrl`.
+- **`/metadata-preview`** dev-aid route showing each route's share card the way iMessage/Slack/Discord/Twitter will render it, plus a raw-meta panel.
+- **`urlConfig.prodHostRedirects`** — source of truth for old hosts the edge should 301 to `prodHost`.
+
+### Changed
+- **`prodHost` renamed `web-tools.donjor.net` → `tools.donjor.net`**. Docs and `lib/metadata.ts` `SITE_URL` derive from `urlConfig.prodHost` (no more drift).
+- **`toolUrl()` for externals** now returns `/external/<slug>` instead of the direct subdomain URL. The direct URL is available via the new `externalDirectUrl(t, ctx)` for the landing-page click-through.
+- **Built-in tool pages split** into server wrapper + client component (`calculator-client.tsx`, `todo-client.tsx`) so the wrapper can export metadata.
+
+### Migration note
+The host rename needs edge changes: see `docs/deploy.md` → *Migrating prodHost* for the DNS / tunnel / Caddy / Cloudflare Bulk Redirects diff.
+
 ## [0.3.0] — 2026-05-19
 
 ### Added

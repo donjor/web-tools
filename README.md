@@ -3,8 +3,11 @@
 A suite of browser-based tools. The root is a card-grid dashboard;
 each card opens one tool.
 
-**Live at:** [`web-tools.donjor.net`](https://web-tools.donjor.net) ·
-externals at `<subdomain>.donjor.net` (e.g. [`r3f-examples.donjor.net`](https://r3f-examples.donjor.net)).
+**Live at:** [`tools.donjor.net`](https://tools.donjor.net) ·
+externals run on `<subdomain>.donjor.net` (e.g.
+[`r3f-examples.donjor.net`](https://r3f-examples.donjor.net)) but the
+dashboard links via host-managed `/external/<slug>` landings so every
+shared link carries proper unfurl metadata.
 
 Two flavors of tools coexist:
 

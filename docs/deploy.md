@@ -23,7 +23,7 @@ How web-tools runs in production, and the day-to-day commands either collaborato
 ```
 
 - **TLS** is terminated at the Cloudflare edge. The tunnel speaks HTTP, Caddy speaks HTTP, the apps speak HTTP. No origin-side certs anywhere.
-- **DNS**: dashboard at `<prodHost>` (`web-tools.donjor.net`); externals flattened to `<sub>.donjor.net` so they sit at the 1-level-deep mark covered by Cloudflare Free Universal SSL. Each external = one CNAME under the apex.
+- **DNS**: dashboard at `<prodHost>` (`tools.donjor.net`); externals flattened to `<sub>.donjor.net` so they sit at the 1-level-deep mark covered by Cloudflare Free Universal SSL. Each external = one CNAME under the apex. Old hosts in `urlConfig.prodHostRedirects` (`web-tools.donjor.net`, apex `donjor.net`) → 301 to `tools.donjor.net` via Cloudflare Bulk Redirects or Page Rules.
 - **Routing** is by Host header in Caddy — one site block per origin. Adding a new external means one new block in Caddyfile, one new ingress entry in cloudflared, one new CNAME at Cloudflare.
 
 ## Ownership model — split wrapper
@@ -79,7 +79,29 @@ Direct git work (`cd /srv/web-tools && git fetch && …`) is fine — setgid + u
 5. **Edge:** add a new `http://<slug>.donjor.net { reverse_proxy <app-host>:<port> }` site block to Caddyfile, reload Caddy. **Exact diff lives in the private runbook.**
 6. `web-tools deploy` on the app host.
 
-> Why three edge edits per tool (not zero): Cloudflare Free Universal SSL only covers 1-level-deep wildcards. If you upgrade to Advanced Certificate Manager, you can switch to a wildcard `*.web-tools.donjor.net` and collapse all three to zero touches forever — see the runbook for the migration path.
+> Why three edge edits per tool (not zero): Cloudflare Free Universal SSL only covers 1-level-deep wildcards. If you upgrade to Advanced Certificate Manager, you can switch to a wildcard `*.donjor.net` and collapse all three to zero touches forever — see the runbook for the migration path.
+
+## Migrating prodHost (e.g. `web-tools.donjor.net` → `tools.donjor.net`)
+
+When `urlConfig.prodHost` flips, the code-side change is `urls.config.ts` +
+`docs/*` + a CHANGELOG entry. The edge-side change is:
+
+1. **Cloudflare DNS**: add proxied CNAME for the new host
+   (`tools.donjor.net → <tunnel>.cfargotunnel.com`).
+2. **Tunnel**: add ingress entry `hostname: tools.donjor.net` to
+   `cloudflared/config.yml`, restart cloudflared.
+3. **Caddy**: add a new `http://tools.donjor.net { reverse_proxy <app-host>:3300 }`
+   site block, reload Caddy.
+4. **Redirects**: for each host in `urlConfig.prodHostRedirects`, add a
+   Cloudflare Bulk Redirect: `<old host>/*` → `https://tools.donjor.net/$1`
+   with status 301 and preserve path/query. (Bulk Redirects > Edit list >
+   add row.) The apex `donjor.net` redirect must coexist with whatever
+   CNAMEs you have for `<sub>.donjor.net` externals — the redirect rule
+   matches the apex hostname only, not subdomains.
+5. Once verified, the old `web-tools.donjor.net` Caddy block / tunnel
+   ingress can be removed (the redirect handles incoming requests).
+
+Exact diff lives in the private runbook.
 
 ## Why these choices
 

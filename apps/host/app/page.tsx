@@ -1,10 +1,14 @@
+import type { Metadata } from "next";
 import { tools } from "@/lib/tools";
 import { ToolCard } from "@/components/tool-card";
 import { BackgroundBeams } from "@web-tools/ui/components/background-beams";
+import { createHomeMetadata } from "@/lib/metadata";
+
+export const metadata: Metadata = createHomeMetadata();
 
 export default function DashboardPage() {
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative flex-1 overflow-hidden">
       <BackgroundBeams className="opacity-60" />
       <div className="relative z-10 mx-auto max-w-6xl px-6 py-16">
         <header className="mb-12">
