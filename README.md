@@ -4,7 +4,7 @@ A suite of browser-based tools. The root is a card-grid dashboard;
 each card opens one tool.
 
 **Live at:** [`web-tools.donjor.net`](https://web-tools.donjor.net) ·
-externals at `<subdomain>.web-tools.donjor.net`.
+externals at `<subdomain>.donjor.net` (e.g. [`r3f-examples.donjor.net`](https://r3f-examples.donjor.net)).
 
 Two flavors of tools coexist:
 

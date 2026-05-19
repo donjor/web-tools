@@ -49,7 +49,7 @@ The environment determines the base.
 |---|---|---|---|
 | Dashboard | `https://web-tools.localhost/` | `https://<wt>.web-tools.localhost/` | `https://web-tools.donjor.net/` |
 | Built-in | `https://web-tools.localhost/<slug>` | `https://<wt>.web-tools.localhost/<slug>` | `https://web-tools.donjor.net/<slug>` |
-| External | `https://<subdomain>.web-tools.localhost/` | same as main (singleton — see below) | `https://<subdomain>.web-tools.donjor.net/` |
+| External | `https://<subdomain>.web-tools.localhost/` | same as main (singleton — see below) | `https://<subdomain>.donjor.net/` |
 
 Worktree behavior: portless auto-prefixes the host's name with the worktree
 slug. The host's dev script uses `portless run --name web-tools next dev`
@@ -59,9 +59,11 @@ them. If you genuinely need a per-worktree external instance, start it
 manually with `portless --name <wt>.<subdomain>.web-tools --app-port <N>
 bun run dev` from the submodule.
 
-The base swap (`web-tools.localhost` ↔ `web-tools.donjor.net`) is centralized in
-[`urls.config.ts`](../urls.config.ts) and applied by `toolUrl()` in
-`packages/tool-kit/src/index.ts`.
+Bases live in [`urls.config.ts`](../urls.config.ts) and are applied by `toolUrl()` in `packages/tool-kit/src/index.ts`:
+
+- `devBase` — dashboard + external base in dev (`web-tools.localhost`).
+- `prodHost` — dashboard host in prod (`web-tools.donjor.net`).
+- `prodExternalBase` — external base in prod (`donjor.net`). Flatter than the dashboard host so Cloudflare Free Universal SSL covers `<sub>.donjor.net` automatically (it only covers 1-level wildcards).
 
 ## Tool registry contract
 
@@ -75,7 +77,7 @@ type ToolManifest =
 ```
 
 `subdomain` is the **identity** part of the external's URL — `r3f-examples`
-becomes `r3f-examples.web-tools.localhost` in dev and `r3f-examples.web-tools.donjor.net`
+becomes `r3f-examples.web-tools.localhost` in dev and `r3f-examples.donjor.net`
 in prod. Don't store the full host; the base belongs to `urls.config.ts`.
 
 `repo` is documentary — humans reading the registry can find the submodule

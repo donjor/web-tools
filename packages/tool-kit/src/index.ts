@@ -35,12 +35,14 @@ export type UrlContext = {
   env: "dev" | "prod";
   /** Dev host suffix, e.g. "web-tools.localhost". External URL: `<subdomain>.<devBase>`. */
   devBase: string;
-  /** Prod host suffix, e.g. "web-tools.donjor.net". External URL: `<subdomain>.<prodHost>`. */
+  /** Prod dashboard host, e.g. "web-tools.donjor.net". */
   prodHost: string;
+  /** Prod external base, e.g. "donjor.net". External URL: `<subdomain>.<prodExternalBase>`. */
+  prodExternalBase: string;
 };
 
 export function toolUrl(t: ToolManifest, ctx: UrlContext): string {
   if (isBuiltin(t)) return `/${t.slug}`;
-  const base = ctx.env === "dev" ? ctx.devBase : ctx.prodHost;
+  const base = ctx.env === "dev" ? ctx.devBase : ctx.prodExternalBase;
   return `https://${t.subdomain}.${base}/`;
 }

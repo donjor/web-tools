@@ -76,8 +76,8 @@ binds to a known port.
   description: "<one-line description>",
   icon: "<LucideIconName>",
   kind: "external",
-  subdomain: "<subdomain>",        // dev: <subdomain>.web-tools.localhost
-                                   // prod: <subdomain>.web-tools.donjor.net
+  subdomain: "<subdomain>",        // dev:  <subdomain>.web-tools.localhost
+                                   // prod: <subdomain>.donjor.net
   repo: "<repo-url>",              // documentary
   tags: ["<optional>"],
 }

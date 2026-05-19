@@ -6,5 +6,6 @@ export function getUrlContext(): UrlContext {
     env: process.env.NODE_ENV === "production" ? "prod" : "dev",
     devBase: urlConfig.devBase,
     prodHost: urlConfig.prodHost,
+    prodExternalBase: urlConfig.prodExternalBase,
   };
 }

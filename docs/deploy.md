@@ -23,8 +23,8 @@ How web-tools runs in production, and the day-to-day commands either collaborato
 ```
 
 - **TLS** is terminated at the Cloudflare edge. The tunnel speaks HTTP, Caddy speaks HTTP, the apps speak HTTP. No origin-side certs anywhere.
-- **DNS** is wildcard: `*.web-tools.donjor.net` (+ apex) both CNAME to the lab tunnel. Adding a new external never touches Cloudflare.
-- **Routing** is by Host header in the single Caddy site block. Adding a new external means one new `@matcher` + `handle` pair in Caddyfile, nothing else at the edge.
+- **DNS**: dashboard at `<prodHost>` (`web-tools.donjor.net`); externals flattened to `<sub>.donjor.net` so they sit at the 1-level-deep mark covered by Cloudflare Free Universal SSL. Each external = one CNAME under the apex.
+- **Routing** is by Host header in Caddy — one site block per origin. Adding a new external means one new block in Caddyfile, one new ingress entry in cloudflared, one new CNAME at Cloudflare.
 
 ## Ownership model — split wrapper
 
@@ -74,10 +74,12 @@ Direct git work (`cd /srv/web-tools && git fetch && …`) is fine — setgid + u
 
 1. **Repo:** add submodule, append a `tools.config.ts` entry, append a `start` line to `scripts/dev-all.sh`. (Detail: [`adding-tools.md`](adding-tools.md).)
 2. **Repo:** add a new PM2 app to `ecosystem.config.cjs` — next free port in the reserved range. Use the external's own `node_modules/.bin/<binary>` as the script (absolute path from the repo root).
-3. **Edge:** add one `@<slug> host <slug>.web-tools.donjor.net` + `handle @<slug> { reverse_proxy <app-host>:<port> }` pair inside the existing Caddy site block. Reload Caddy. **Exact diff lives in the private runbook.**
-4. **Cloudflare:** nothing. The wildcard CNAME already covers any `<slug>.web-tools.donjor.net`.
-5. **Tunnel:** nothing. The wildcard ingress already covers any `<slug>.web-tools.donjor.net`.
+3. **Cloudflare DNS:** one new proxied CNAME `<slug>.donjor.net → <tunnel>.cfargotunnel.com`.
+4. **Tunnel:** add one ingress entry `hostname: <slug>.donjor.net` to `cloudflared/config.yml`, restart cloudflared.
+5. **Edge:** add a new `http://<slug>.donjor.net { reverse_proxy <app-host>:<port> }` site block to Caddyfile, reload Caddy. **Exact diff lives in the private runbook.**
 6. `web-tools deploy` on the app host.
+
+> Why three edge edits per tool (not zero): Cloudflare Free Universal SSL only covers 1-level-deep wildcards. If you upgrade to Advanced Certificate Manager, you can switch to a wildcard `*.web-tools.donjor.net` and collapse all three to zero touches forever — see the runbook for the migration path.
 
 ## Why these choices
 
