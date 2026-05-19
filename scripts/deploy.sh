@@ -43,9 +43,9 @@ for toml in "$REPO/scripts/externals/"*.toml; do
   [ -f "$REPO/$dir/package.json" ] || { echo "  · $dir — not present, skipped"; continue; }
   echo "  · $dir"
   if [ -x "$REPO/$dir/node_modules/.bin/vite" ]; then
-    ( cd "$REPO/$dir" && NODE_OPTIONS="--max-old-space-size=384" ./node_modules/.bin/vite build )
+    ( cd "$REPO/$dir" && NODE_OPTIONS="--max-old-space-size=1024" ./node_modules/.bin/vite build )
   else
-    ( cd "$REPO/$dir" && NODE_OPTIONS="--max-old-space-size=384" \
+    ( cd "$REPO/$dir" && NODE_OPTIONS="--max-old-space-size=1024" \
         bun run build || echo "    (no build script — skipped)" )
   fi
 done
