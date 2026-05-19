@@ -101,6 +101,43 @@ bun run dev:host    # host only — explicit override
 If an external is misbehaving or you want a clean host-only run, use
 `bun run dev:host`.
 
+## Data persistence (built-in tools)
+
+Built-in tools that need to persist state use **SQLite via Prisma** in dev
+and single-host prod. The intended migration path is Postgres on a
+dedicated server once it's worth running one; the schema and code must
+make that swap config-only.
+
+### Where the data lives
+
+- **Dev**: `apps/host/.data/<tool>.db` (gitignored except for the `.gitkeep`
+  that reserves the directory).
+- **Prod** (per [`.dump/plans/001_2026-05-19_lxc-deploy`](../.dump/plans/001_2026-05-19_lxc-deploy/PLAN.md)):
+  a path under `/srv/web-tools/data/` writable by the `webtools` PM2 user.
+  Pick paths that survive that ownership model.
+
+### Postgres-portability rules
+
+The schema MUST work unchanged when we swap Prisma's
+`datasource.provider` from `sqlite` to `postgresql`. To keep that promise:
+
+- No SQLite-only column types (`BLOB`, untyped `TEXT` storage class tricks).
+- No SQLite-specific functions or expressions in default values.
+- No virtual columns.
+- No raw SQL access — go through Prisma client only.
+- Foreign keys explicit; cascade behavior set in the schema.
+
+A swap to Postgres will then be: change `provider`, point `DATABASE_URL`
+at the Postgres instance, re-run migrations. No app code changes.
+
+### Where Prisma artifacts live
+
+Prisma is a host-level concern (only built-in tools touch it). Schema at
+`apps/host/prisma/schema.prisma`, generated client at
+`apps/host/prisma/generated/`, migrations at `apps/host/prisma/migrations/`.
+If a second built-in tool needs the same DB, both share the host's Prisma
+client (one `schema.prisma`, multiple model groups).
+
 ## Why hoisted (`bunfig.toml`)
 
 bun's default install is "isolated" — workspace deps live in each package's

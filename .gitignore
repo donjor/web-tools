@@ -41,3 +41,9 @@ coverage/
 # private host-specific runbook (IPs, internal hostnames, lab-only diffs)
 # Copied between collaborator machines out-of-band — never committed.
 /private/
+
+# Local SQLite (and any other dev-only data files) for built-in tools.
+# The .data/ directory is committed (via .gitkeep) so the path exists on
+# a fresh clone, but its contents are ignored.
+apps/host/.data/*
+!apps/host/.data/.gitkeep
