@@ -125,6 +125,17 @@ bun run dev:host    # host only — explicit override
 If an external is misbehaving or you want a clean host-only run, use
 `bun run dev:host`.
 
+### Escape hatch: `dev:noproxy`
+
+`bun run dev:noproxy` (`scripts/dev-noproxy.sh`) starts everything on raw
+`localhost:<port>` — no portless, no HTTPS, no subdomains, no worktree
+namespacing. Host runs the host workspace's `dev:raw` (plain
+`next dev --turbopack`) on `$HOST_PORT` (default 3000); each external runs
+its toml `dev` command directly on its declared `port`. Single checkout
+only — there's no port offset, and the `/external/<slug>` landing won't
+click through (it still composes `<sub>.web-tools.localhost`). For
+contributors who can't or don't want to install portless.
+
 ## Data persistence (built-in tools)
 
 Built-in tools that need to persist state use **SQLite via Prisma** in dev

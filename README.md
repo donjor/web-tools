@@ -30,10 +30,12 @@ git submodule update --init --recursive
 bun install        # root + every external (postinstall installs submodules)
 bun run dev        # host + every external (worktrees too, branch-namespaced)
 bun run dev:host   # host only — explicit, useful when an external is misbehaving
+bun run dev:noproxy # raw localhost ports — escape hatch when portless isn't set up
 ```
 
 First time on this machine? See [`docs/setup.md`](docs/setup.md) for the
-`portless trust` step and other one-time setup.
+`portless trust` step and other one-time setup. No portless? Use
+[`bun run dev:noproxy`](docs/setup.md#running-without-portless-devnoproxy).
 
 ## Repo layout
 

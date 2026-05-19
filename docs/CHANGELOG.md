@@ -9,6 +9,11 @@ for fixes-only, **MAJOR** only on breaking external-facing changes.
 
 ---
 
+## [Unreleased]
+
+### Added
+- **`bun run dev:noproxy`** — escape hatch that starts the host + every external on raw `localhost:<port>` (no portless, no HTTPS, no subdomains, no worktree namespacing). For contributors who can't or don't want to install portless. Host port is configurable via `$HOST_PORT` (default 3000); each external uses the raw `port` from its `scripts/externals/<slug>.toml`. The `/external/<slug>` landing's click-through doesn't work in this mode — hit externals at their printed `http://localhost:<port>` URL.
+
 ## [0.4.1] — 2026-05-19
 
 ### Added

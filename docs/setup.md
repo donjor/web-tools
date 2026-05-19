@@ -52,10 +52,42 @@ without collisions.
 |---|---|
 | `bun run dev` | Host + every external. Worktrees: branch-namespaced. |
 | `bun run dev:host` | Host only — explicit override, useful when an external is misbehaving. |
+| `bun run dev:noproxy` | Escape hatch: host + every external on raw `localhost:<port>`. No portless / HTTPS / subdomains. See below. |
 | `bun run build` | Production build of the host. |
 | `bun run typecheck` | `tsc --noEmit` across all four workspaces. |
 | `bun run check` | typecheck (alias). |
 | `bun run clean` | Remove `node_modules` and `.next/` everywhere. |
+
+## Running without portless (`dev:noproxy`)
+
+For machines where portless isn't installed or isn't cooperating. Runs the
+host and every external on raw localhost ports — no proxy, no HTTPS, no
+`*.localhost` subdomains, no worktree namespacing.
+
+```bash
+bun run dev:noproxy            # host on :3000, externals on their toml port
+HOST_PORT=4000 bun run dev:noproxy   # override host port
+```
+
+| Surface | URL |
+|---|---|
+| Dashboard | `http://localhost:3000/` |
+| Built-in tool | `http://localhost:3000/<slug>` |
+| External tool | `http://localhost:<port>/` (port from `scripts/externals/<slug>.toml`) |
+
+Each external's URL is printed at startup.
+
+Trade-offs vs `bun run dev`:
+
+- The dashboard's **`/external/<slug>` landing page** composes the
+  `<sub>.web-tools.localhost` origin and **will not click through** in this
+  mode. Hit externals directly at their printed `http://localhost:<port>`
+  URL instead.
+- **One checkout at a time.** No branch namespacing — running two
+  checkouts in this mode will fight over the same ports. Set `HOST_PORT`
+  + edit toml ports manually if you really need two.
+- No HTTPS — anything that requires a secure context (some Web APIs,
+  service workers) won't work.
 
 ## Worktrees
 

@@ -7,6 +7,7 @@
   },
   "scripts": {
     "dev": "portless run --name web-tools next dev --turbopack",
+    "dev:raw": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit"
