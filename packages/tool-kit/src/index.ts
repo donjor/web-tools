@@ -39,10 +39,17 @@ export type UrlContext = {
   prodHost: string;
   /** Prod external base, e.g. "donjor.net". External URL: `<subdomain>.<prodExternalBase>`. */
   prodExternalBase: string;
+  /** Worktree branch slug (dev only). When set, the external URL becomes
+   *  `<subdomain>.<wtBranch>.<devBase>` so each worktree's host routes to
+   *  its own externals instead of the main checkout's. */
+  wtBranch?: string;
 };
 
 export function toolUrl(t: ToolManifest, ctx: UrlContext): string {
   if (isBuiltin(t)) return `/${t.slug}`;
-  const base = ctx.env === "dev" ? ctx.devBase : ctx.prodExternalBase;
-  return `https://${t.subdomain}.${base}/`;
+  if (ctx.env === "dev") {
+    const base = ctx.wtBranch ? `${ctx.wtBranch}.${ctx.devBase}` : ctx.devBase;
+    return `https://${t.subdomain}.${base}/`;
+  }
+  return `https://${t.subdomain}.${ctx.prodExternalBase}/`;
 }

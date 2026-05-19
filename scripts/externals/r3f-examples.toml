@@ -1,0 +1,12 @@
+# Web-tools external registry entry. The filename slug is the source of truth:
+#   slug      = "r3f-examples" (filename)
+#   directory = "apps/external/<slug>"
+#   route     = "<slug>.web-tools.localhost" (main checkout)
+#             | "<slug>.<branch>.web-tools.localhost" (worktree)
+#
+# port: what the dev process binds to (and what portless proxies to).
+# dev:  command to launch the dev server. `{PORT}` is substituted at launch
+#       time. Main checkout uses the literal `port` above; worktrees offset
+#       it by a branch-deterministic amount so two checkouts can coexist.
+port = 4444
+dev = "bunx vite --port {PORT}"

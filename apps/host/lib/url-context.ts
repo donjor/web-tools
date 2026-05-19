@@ -7,5 +7,6 @@ export function getUrlContext(): UrlContext {
     devBase: urlConfig.devBase,
     prodHost: urlConfig.prodHost,
     prodExternalBase: urlConfig.prodExternalBase,
+    wtBranch: process.env.WEB_TOOLS_WT_BRANCH || undefined,
   };
 }
