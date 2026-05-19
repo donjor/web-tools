@@ -76,7 +76,7 @@ Direct git work (`cd /srv/web-tools && git fetch && …`) is fine — setgid + u
 2. **Repo:** add a new PM2 app to `ecosystem.config.cjs` — next free port in the reserved range. Use the external's own `node_modules/.bin/<binary>` as the script (absolute path from the repo root).
 3. **Cloudflare DNS:** one new proxied CNAME `<slug>.donjor.net → <tunnel>.cfargotunnel.com`.
 4. **Tunnel:** add one ingress entry `hostname: <slug>.donjor.net` to `cloudflared/config.yml`, restart cloudflared.
-5. **Edge:** add a new `http://<slug>.donjor.net { reverse_proxy <app-host>:<port> }` site block to Caddyfile, reload Caddy. **Exact diff lives in the private runbook.**
+5. **Edge:** add a new `http://<slug>.donjor.net { import web-tools-headers; reverse_proxy <app-host>:<port> }` site block to Caddyfile, reload Caddy. `(web-tools-headers)` is STS-only; web-tools sites must not import the shared `(security-headers)` snippet (which is onyxflix-tuned and breaks third-party asset fetches). **Exact diff lives in the private runbook.**
 6. `web-tools deploy` on the app host.
 
 > Why three edge edits per tool (not zero): Cloudflare Free Universal SSL only covers 1-level-deep wildcards. If you upgrade to Advanced Certificate Manager, you can switch to a wildcard `*.donjor.net` and collapse all three to zero touches forever — see the runbook for the migration path.

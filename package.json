@@ -1,7 +1,7 @@
 {
   "name": "web-tools",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "A monorepo dashboard for browser-based tools — built-in (Next.js routes) and external (git submodules).",
   "repository": {
     "type": "git",

@@ -9,6 +9,14 @@ for fixes-only, **MAJOR** only on breaking external-facing changes.
 
 ---
 
+## [0.4.1] — 2026-05-19
+
+### Added
+- **3s auto-redirect on `/external/<slug>`** with a Cancel button — the landing page no longer requires a manual click to reach the external. The countdown still gives crawlers a moment to scrape the host-managed metadata and lets humans copy the URL or back out.
+
+### Fixed
+- **CSP on deployed externals** — `r3f-examples.donjor.net` was inheriting an onyxflix-tuned `(security-headers)` Caddy snippet whose `connect-src` only allowed `wss://onyxflix.net`, blocking the Cloudflare beacon, raw.githack.com HDR fetches, and most other third-party assets. Edge now imports a web-tools-specific `(web-tools-headers)` snippet (STS only). See `docs/deploy.md` for the snippet and `private/RUNBOOK.md` for the swap.
+
 ## [0.4.0] — 2026-05-19
 
 ### Added

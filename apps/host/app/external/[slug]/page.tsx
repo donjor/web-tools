@@ -7,6 +7,7 @@ import { Badge } from "@web-tools/ui/components/badge";
 import { externalDirectUrl } from "@web-tools/tool-kit";
 import { externalSlugs, getExternal } from "@/lib/tools";
 import { ToolFrame } from "@/components/tool-frame";
+import { ExternalAutoRedirect } from "@/components/external-auto-redirect";
 import { createExternalMetadata } from "@/lib/metadata";
 import { getUrlContext } from "@/lib/url-context";
 import { resolveIcon } from "@/lib/icons";
@@ -62,17 +63,20 @@ export default async function ExternalLandingPage({
               Open {tool.title}
             </a>
           </Button>
-          <div className="text-xs text-(--color-muted-foreground)">
-            opens at{" "}
-            <a
-              href={directUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="font-mono underline-offset-2 hover:underline"
-            >
-              {host}
-              <ArrowUpRight className="ml-0.5 inline h-3 w-3" />
-            </a>
+          <div className="flex flex-col items-center gap-3">
+            <div className="text-xs text-(--color-muted-foreground)">
+              opens at{" "}
+              <a
+                href={directUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="font-mono underline-offset-2 hover:underline"
+              >
+                {host}
+                <ArrowUpRight className="ml-0.5 inline h-3 w-3" />
+              </a>
+            </div>
+            <ExternalAutoRedirect href={directUrl} />
           </div>
         </div>
       </Card>
