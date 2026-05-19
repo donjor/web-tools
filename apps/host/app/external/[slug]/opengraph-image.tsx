@@ -1,15 +1,14 @@
 import { renderOgImage, ogSize, ogContentType } from "@/lib/og";
-import { getExternal } from "@/lib/metadata";
-import { tools } from "@/lib/tools";
-import { isExternal } from "@web-tools/tool-kit";
+import { externalSlugs, getExternal } from "@/lib/tools";
 
 export const size = ogSize;
 export const contentType = ogContentType;
+export const alt = "External tool · web-tools";
 
 type Params = { slug: string };
 
 export function generateStaticParams(): Params[] {
-  return tools.filter(isExternal).map((t) => ({ slug: t.slug }));
+  return externalSlugs().map((slug) => ({ slug }));
 }
 
 export default async function Image({

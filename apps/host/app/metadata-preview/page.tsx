@@ -105,15 +105,25 @@ export default function MetadataPreviewPage() {
   );
 }
 
-function summarize({ label, path, meta }: RouteSpec): MetadataSummary {
+type OgFields = {
+  title?: Metadata["title"];
+  description?: string | null;
+  url?: string | URL;
+};
+type TwitterFields = {
+  card?: string;
+  title?: Metadata["title"];
+  description?: string | null;
+};
+
+function summarize({ path, meta }: RouteSpec): MetadataSummary {
   const url = new URL(path, SITE_URL).toString();
   const ogImagePath = path === "/" ? "/opengraph-image" : `${path}/opengraph-image`;
   const title = readTitle(meta.title) ?? SITE_NAME;
   const description = readString(meta.description) ?? "";
-  const og = meta.openGraph ?? {};
-  const tw = meta.twitter ?? {};
+  const og = (meta.openGraph ?? {}) as OgFields;
+  const tw = (meta.twitter ?? {}) as TwitterFields;
   return {
-    label,
     path,
     url,
     title,
@@ -121,12 +131,10 @@ function summarize({ label, path, meta }: RouteSpec): MetadataSummary {
     ogImagePath,
     ogTitle: readTitle(og.title) ?? title,
     ogDescription: readString(og.description) ?? description,
-    ogUrl: readString((og as { url?: string | URL }).url) ?? url,
-    twitterCard:
-      readString((tw as { card?: string }).card) ?? "summary_large_image",
-    twitterTitle: readTitle((tw as { title?: Metadata["title"] }).title) ?? title,
-    twitterDescription:
-      readString((tw as { description?: string | null }).description) ?? description,
+    ogUrl: readString(og.url) ?? url,
+    twitterCard: readString(tw.card) ?? "summary_large_image",
+    twitterTitle: readTitle(tw.title) ?? title,
+    twitterDescription: readString(tw.description) ?? description,
   };
 }
 

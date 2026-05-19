@@ -39,8 +39,10 @@ with `{PORT}` substituted at start time).
 - A git submodule at `apps/external/<slug>/`.
 - Can be any framework — Next, Vite, Astro, plain SPA.
 - Runs on its own dev server, configured in `scripts/externals/<slug>.toml`.
-- Owns its origin: `<subdomain>.<base>`. The dashboard links out; the host
-  does not proxy or path-mount externals.
+- Owns its origin: `<subdomain>.<base>`. The dashboard links via a
+  host-managed landing at `/external/<slug>` so shared URLs carry host
+  metadata; the landing click-throughs to the real origin. Host doesn't
+  proxy or path-mount the external's bytes.
 
 ## URL model
 
@@ -73,7 +75,11 @@ real origin from it, so the host-managed `/external/<slug>` landing in a
 worktree clicks through to that worktree's own external instance rather
 than the main checkout's.
 
-Bases live in [`urls.config.ts`](../urls.config.ts) and are applied by `toolUrl()` in `packages/tool-kit/src/index.ts`:
+Bases live in [`urls.config.ts`](../urls.config.ts). `toolUrl()` returns
+host-relative paths (`/<slug>` or `/external/<slug>`); the external
+landing uses `externalDirectUrl()` to compose the actual origin URL from
+the env-aware base for the click-through. Both live in
+`packages/tool-kit/src/index.ts`.
 
 - `devBase` — dashboard + external base in dev (`web-tools.localhost`).
 - `prodHost` — dashboard host in prod (`tools.donjor.net`).

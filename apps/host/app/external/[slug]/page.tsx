@@ -4,17 +4,17 @@ import { ArrowUpRight, ExternalLink } from "lucide-react";
 import { Button } from "@web-tools/ui/components/button";
 import { Card } from "@web-tools/ui/components/card";
 import { Badge } from "@web-tools/ui/components/badge";
-import { isExternal, externalDirectUrl } from "@web-tools/tool-kit";
-import { tools } from "@/lib/tools";
+import { externalDirectUrl } from "@web-tools/tool-kit";
+import { externalSlugs, getExternal } from "@/lib/tools";
 import { ToolFrame } from "@/components/tool-frame";
-import { createExternalMetadata, getExternal } from "@/lib/metadata";
+import { createExternalMetadata } from "@/lib/metadata";
 import { getUrlContext } from "@/lib/url-context";
 import { resolveIcon } from "@/lib/icons";
 
 type Params = { slug: string };
 
 export function generateStaticParams(): Params[] {
-  return tools.filter(isExternal).map((t) => ({ slug: t.slug }));
+  return externalSlugs().map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({

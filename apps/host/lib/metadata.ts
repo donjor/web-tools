@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { getBuiltin, tools } from "@/lib/tools";
-import { isExternal, type ExternalToolManifest } from "@web-tools/tool-kit";
+import { getBuiltin, getExternal } from "@/lib/tools";
 import { urlConfig } from "@root/urls.config";
 
 export const SITE_NAME = "web-tools";
@@ -77,12 +76,6 @@ export function createToolMetadata(slug: string): Metadata {
       description,
     },
   };
-}
-
-export function getExternal(slug: string): ExternalToolManifest | undefined {
-  return tools.find((t) => t.slug === slug && isExternal(t)) as
-    | ExternalToolManifest
-    | undefined;
 }
 
 export function externalLandingPath(slug: string): string {

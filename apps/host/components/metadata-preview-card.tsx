@@ -1,7 +1,6 @@
 import { Card } from "@web-tools/ui/components/card";
 
 export type MetadataSummary = {
-  label: string;
   path: string;
   url: string;
   title: string;
