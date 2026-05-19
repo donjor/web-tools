@@ -29,11 +29,20 @@ bun install
 source "$REPO/scripts/externals.sh"
 
 echo "▶ build each external (postinstall handled install)"
+# Memory-constrained LXC: NODE_OPTIONS caps Node heap so swap absorbs spikes
+# instead of the kernel killing the build. Externals with vite skip the
+# upstream `tsc --noEmit && vite build` and run vite directly — type-checking
+# is a CI concern, not a deploy concern.
 for entry in "${EXTERNALS[@]}"; do
   read -r dir _name _port <<<"$entry"
   [ -f "$REPO/$dir/package.json" ] || { echo "  · $dir — not present, skipped"; continue; }
   echo "  · $dir"
-  ( cd "$REPO/$dir" && (bun run build || echo "    (no build script — skipped)") )
+  if [ -x "$REPO/$dir/node_modules/.bin/vite" ]; then
+    ( cd "$REPO/$dir" && NODE_OPTIONS="--max-old-space-size=384" ./node_modules/.bin/vite build )
+  else
+    ( cd "$REPO/$dir" && NODE_OPTIONS="--max-old-space-size=384" \
+        bun run build || echo "    (no build script — skipped)" )
+  fi
 done
 
 echo "▶ write preview-config overrides for externals served via Vite preview"
