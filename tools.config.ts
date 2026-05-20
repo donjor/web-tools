@@ -18,6 +18,14 @@ export const tools: ToolManifest[] = [
     tags: ["productivity"],
   },
   {
+    slug: "pomodoro",
+    title: "Pomodoro",
+    description: "A focus timer with 25/5 Pomodoro cycles and short/long breaks.",
+    icon: "Timer",
+    kind: "builtin",
+    tags: ["productivity"],
+  },
+  {
     slug: "r3f-examples",
     title: "R3F Examples",
     description: "A gallery of React Three Fiber scenes (Vite).",
