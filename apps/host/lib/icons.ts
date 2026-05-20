@@ -2,6 +2,7 @@ import {
   Boxes,
   Calculator,
   CheckSquare,
+  Timer,
   Wrench,
   type LucideIcon,
 } from "lucide-react";
@@ -10,6 +11,7 @@ const map: Record<string, LucideIcon> = {
   Boxes,
   Calculator,
   CheckSquare,
+  Timer,
   Wrench,
 };
 
