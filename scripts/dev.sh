@@ -17,6 +17,8 @@ set -e
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
+bash "$ROOT/scripts/db-preflight.sh" "[dev]"
+
 PIDS=()
 cleanup() {
   trap - INT TERM EXIT

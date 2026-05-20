@@ -12,7 +12,7 @@
     "dev": "bash scripts/dev.sh",
     "dev:host": "bun run --filter @web-tools/host dev",
     "dev:noproxy": "bash scripts/dev-noproxy.sh",
-    "build": "bun run --filter @web-tools/host build",
+    "build": "bash scripts/build.sh",
     "start": "bun run --filter @web-tools/host start",
     "typecheck": "bun run --filter '*' typecheck",
     "check": "bun run typecheck",
