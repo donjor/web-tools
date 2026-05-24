@@ -20,6 +20,8 @@ set -e
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 HOST_PORT="${HOST_PORT:-3000}"
 
+bash "$ROOT/scripts/db-preflight.sh" "[dev:noproxy]"
+
 PIDS=()
 cleanup() {
   trap - INT TERM EXIT

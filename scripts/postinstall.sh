@@ -12,6 +12,11 @@ set -e
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
+if [ -f "$ROOT/apps/host/prisma/schema.prisma" ]; then
+  echo "[postinstall] generating Prisma client"
+  ( cd "$ROOT/apps/host" && bunx prisma generate )
+fi
+
 shopt -s nullglob
 for toml in "$ROOT/scripts/externals/"*.toml; do
   slug=$(basename "$toml" .toml)

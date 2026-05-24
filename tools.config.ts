@@ -12,7 +12,7 @@ export const tools: ToolManifest[] = [
   {
     slug: "todo",
     title: "Todo",
-    description: "A todo list stored in your browser (localStorage).",
+    description: "A persistent todo list with multiple named lists.",
     icon: "CheckSquare",
     kind: "builtin",
     tags: ["productivity"],

@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model TodoList {
+  id        String     @id @default(cuid())
+  name      String
+  createdAt DateTime   @default(now())
+  items     TodoItem[]
+}
+
+model TodoItem {
+  id        String   @id @default(cuid())
+  text      String
+  done      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  list      TodoList @relation(fields: [listId], references: [id], onDelete: Cascade)
+  listId    String
+}

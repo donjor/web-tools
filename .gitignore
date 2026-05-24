@@ -42,6 +42,9 @@ coverage/
 # Copied between collaborator machines out-of-band — never committed.
 /private/
 
+# Prisma generated client (regenerated on install via postinstall)
+apps/host/prisma/generated/
+
 # Local SQLite (and any other dev-only data files) for built-in tools.
 # The .data/ directory is committed (via .gitkeep) so the path exists on
 # a fresh clone, but its contents are ignored.
