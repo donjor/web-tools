@@ -18,6 +18,16 @@ export const tools: ToolManifest[] = [
     tags: ["productivity"],
   },
   {
+    slug: "r3f-test",
+    title: "R3F Test",
+    description: "R3F experiments and test scenes.",
+    icon: "Boxes",
+    kind: "external",
+    subdomain: "r3f-test",
+    repo: "https://github.com/Log-Worc/r3f-test.git",
+    tags: ["3d", "r3f"],
+  },
+  {
     slug: "r3f-examples",
     title: "R3F Examples",
     description: "A gallery of React Three Fiber scenes (Vite).",

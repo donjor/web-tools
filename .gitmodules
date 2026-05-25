@@ -1,3 +1,6 @@
 [submodule "apps/external/r3f-examples"]
 	path = apps/external/r3f-examples
 	url = https://github.com/donjor/r3f-examples.git
+[submodule "apps/external/r3f-test"]
+	path = apps/external/r3f-test
+	url = https://github.com/Log-Worc/r3f-test.git
